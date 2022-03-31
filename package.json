@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/alshaDIDIT/ec-todo/issues"
   },
-  "homepage": "https://github.com/alshaDIDIT/ec-todo#readme"
+  "homepage": "https://github.com/alshaDIDIT/ec-todo#readme",
+  "devDependencies": {
+    "parcel": "^2.4.0"
+  }
 }
