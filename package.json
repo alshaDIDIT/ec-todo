@@ -1,0 +1,19 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "EC Utbilding assignment, to do list",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alshaDIDIT/ec-todo.git"
+  },
+  "author": "Youssef Al Shadidi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alshaDIDIT/ec-todo/issues"
+  },
+  "homepage": "https://github.com/alshaDIDIT/ec-todo#readme"
+}
