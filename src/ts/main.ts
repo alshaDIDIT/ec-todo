@@ -5,8 +5,8 @@ let ass2 = new Assignment("Cleaning", false, new Date(), null);
 
 let toDos: Assignment[] = [ass1, ass2];
 
-let toDoList: HTMLUListElement = document.getElementById("todo-list") as HTMLUListElement;
-let toDoLists: HTMLDivElement = document.getElementById("todo-list") as HTMLDivElement;
+let toDoList: HTMLDivElement = document.getElementById("todo-list") as HTMLDivElement;
+let doneList: HTMLDivElement = document.getElementById("done-list") as HTMLDivElement;
 
 for (let i = 0; i < toDos.length; i++) {
     const toDo = toDos[i];
@@ -14,7 +14,6 @@ for (let i = 0; i < toDos.length; i++) {
     const undone: string = "UNDO";
 
     let listObject = document.createElement("div");
-    listObject.setAttribute("id", "l" + i.toString());
     listObject.setAttribute("class", "d-flex list-group-item justify-content-between");
 
     let title: HTMLHeadElement = document.createElement("h3");
@@ -22,32 +21,41 @@ for (let i = 0; i < toDos.length; i++) {
 
     let liButton: HTMLButtonElement = document.createElement("button");
     liButton.setAttribute("id", "b" + i.toString());
-    liButton.setAttribute("class", "btn btn-primary");
+    liButton.setAttribute("class", "btn btn-success");
     liButton.innerHTML = done;
+
+    listObject.appendChild(title);
+    listObject.appendChild(liButton);
 
     liButton.onclick = function() {
         if(toDo.done == false) {
             toDo.done = true;
-            title.style.textDecoration = "line-through";
             liButton.setAttribute("class", "btn btn-dark");
             liButton.innerHTML = undone;
-            title.style.color = "green";
+            // title.style.color = "green";
+            listObject
             toDo.doneAt = new Date();
+            doneList.appendChild(listObject);
         } else {
             toDo.done = false;
             title.style.textDecoration = "none";
-            title.style.color = "black";
-            liButton.setAttribute("class", "btn btn-primary");
+            liButton.setAttribute("class", "btn btn-success");
             liButton.innerHTML = done;
             toDo.doneAt = new Date();
+            toDoList.appendChild(listObject);
         }
     };
-    
-    listObject.appendChild(title);
-    listObject.appendChild(liButton);
 
-    toDoLists.appendChild(listObject);
+    toDoList.appendChild(listObject);
 }
+
+console.log(toDos);
+
+/* function addDone() {
+    for () {
+
+    }
+} */
 
 /* for (let i = 0; i < toDos.length; i++) {
     const toDo = toDos[i];
