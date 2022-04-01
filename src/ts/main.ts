@@ -131,31 +131,52 @@ function undoButton(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLBu
 /* 
             SORT
 */
-orderAToDo.onclick = function() {
-    toDoList.innerHTML = "";
+  
+function isAOrder(el,index,arr) {
+    // Return true for the first element
+    if (index === 0){
+      return true;
+    }
+    else {
+    // Compare the value of the previous element
+      return (el.title >= arr[index - 1].title);
+    }
+}
 
-    /* if (d = 0) {
+orderAToDo.onclick = function() {
+    if (toDos.every(isAOrder)) {
+        toDoList.innerHTML = "";
         toDos.sort((a, b) => b.title.localeCompare(a.title));
         for (let i = 0; i < toDos.length; i++) {
             const assignment = toDos[i];
             createListObject(assignment);
         }
         return;
-    } */
-
+    }
+    
+    toDoList.innerHTML = "";
     toDos.sort((a, b) => a.title.localeCompare(b.title));
     for (let i = 0; i < toDos.length; i++) {
-        let assignment = toDos[i];
+        const assignment = toDos[i];
         createListObject(assignment);
-    }
+    }    
 }
 
 orderADone.onclick = function() {
+    if (toDones.every(isAOrder)) {
+        doneList.innerHTML = "";
+        toDones.sort((a, b) => b.title.localeCompare(a.title));
+        for (let i = 0; i < toDones.length; i++) {
+            const assignment = toDones[i];
+            createListObject(assignment);
+        }
+        return;
+    }
+    
     doneList.innerHTML = "";
-
     toDones.sort((a, b) => a.title.localeCompare(b.title));
     for (let i = 0; i < toDones.length; i++) {
-        let assignment = toDones[i];
+        const assignment = toDones[i];
         createListObject(assignment);
-    }
+    }  
 }
