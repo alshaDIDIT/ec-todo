@@ -85,7 +85,7 @@ addButton.onclick = function() {
             toDoList.appendChild(listObject);
         }
     };
-
+    addInput.value = "";
     toDoList.appendChild(listObject);
 }
 
