@@ -139,11 +139,13 @@ function isAOrder(el,index,arr) {
     }
     else {
     // Compare the value of the previous element
-      return (el.title >= arr[index - 1].title);
+      return (el.title.toLowerCase() >= arr[index - 1].title.toLowerCase());
     }
 }
 
 orderAToDo.onclick = function() {
+    console.log(toDos)
+
     if (toDos.every(isAOrder)) {
         toDoList.innerHTML = "";
         toDos.sort((a, b) => b.title.localeCompare(a.title));
@@ -151,15 +153,17 @@ orderAToDo.onclick = function() {
             const assignment = toDos[i];
             createListObject(assignment);
         }
-        return;
+        console.log(toDos);
+        console.log(toDones);
+    } else {
+        toDoList.innerHTML = "";
+        toDos.sort((a, b) => a.title.localeCompare(b.title));
+        for (let i = 0; i < toDos.length; i++) {
+            const assignment = toDos[i];
+            createListObject(assignment);
+        }
     }
-    
-    toDoList.innerHTML = "";
-    toDos.sort((a, b) => a.title.localeCompare(b.title));
-    for (let i = 0; i < toDos.length; i++) {
-        const assignment = toDos[i];
-        createListObject(assignment);
-    }    
+    console.log(toDos.every(isAOrder));
 }
 
 orderADone.onclick = function() {
