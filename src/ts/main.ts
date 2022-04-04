@@ -59,7 +59,7 @@ addButton.onclick = function() {
         
     createListObject(assignment);
     addInput.value = "";
-    localStorage.setItem("todosList", JSON.stringify(toDos));
+    localStorage.setItem("todosList", JSON.stringify(tempList));
 }
 
 /* 
@@ -77,57 +77,46 @@ function createListObject(assignment: Assignment) {
     listObject.appendChild(title);
     listObject.appendChild(liButton);
 
-    doneUndoButton(listObject, assignment, liButton);
+    doneUndoButtonFunction(listObject, assignment, liButton);
 
     if (assignment.done == true) {
-        newButton(true, liButton, listObject);
+        newButton(true, listObject, assignment, liButton);
         return;
     }
         
-    newButton(false, liButton, listObject);
+    newButton(false, listObject, assignment, liButton);
 }
 
 /* 
             DONE/UNDO BUTTON FUNCTION LOGIC 
 */
-function doneUndoButton(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
+function doneUndoButtonFunction(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
     button.onclick = function() {
         if(assignment.done == false) {
-            doneButton(aDiv, assignment, button);
-            localStorage.setItem("todosList", JSON.stringify(toDos));
+            newButton(true, aDiv, assignment, button);
+            localStorage.setItem("todosList", JSON.stringify(tempList));
             return;
         }
-        undoButton(aDiv, assignment, button);
-        localStorage.setItem("todosList", JSON.stringify(toDos));
+        newButton(false, aDiv, assignment, button);
+        localStorage.setItem("todosList", JSON.stringify(tempList));
     };
 }
 
-function newButton(isIt: boolean, nButton: HTMLButtonElement, aDiv: HTMLDivElement) {
+function newButton(isIt: boolean, aDiv: HTMLDivElement, assignment: Assignment, nButton: HTMLButtonElement) {
     if (isIt == true) {
         nButton.innerHTML = undo;
         nButton.setAttribute("class", "btn btn-dark");
         doneList.appendChild(aDiv);
+        assignment.done = true;
+        assignment.doneAt = new Date();
         return;
     }
     
     nButton.innerHTML = done;
     nButton.setAttribute("class", "btn btn-success");
     toDoList.appendChild(aDiv);
-}
-
-
-// DONE FUNCTION
-function doneButton(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
-    newButton(true, button, aDiv);
-    assignment.done = true;
-    assignment.doneAt = new Date();
-}
-// UNDO FUNCTION
-function undoButton(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
-    newButton(false, button, aDiv);
     assignment.done = false;
     assignment.doneAt = null;
-    // toDos.splice(toDos.indexOf(assignment), 1);
 }
 
 /* 
@@ -186,8 +175,7 @@ orderNToDo.onclick = function() {
         return;
     }
 
-    toDos.sort((dateA, dateB) =>
-        dateA.addedAt.getTime() - dateB.addedAt.getTime());
+    toDos.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
 
     printList(false);
 }
