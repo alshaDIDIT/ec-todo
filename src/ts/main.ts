@@ -1,23 +1,7 @@
 import { Assignment } from "./models/Assignment";
 
-let assignment1 = new Assignment("JavaScript", true, new Date("2022-03-22"), new Date("2022-04-01"));
-let assignment2 = new Assignment("Avancerad JavaScript", false, new Date("2022-04-22"), null);
-let assignment3 = new Assignment("HTML & CSS", true, new Date("2022-02-22"), new Date("2022-03-01"));
-let assignment4 = new Assignment("Praktisk databasdesign", true, new Date("2022-01-22"), new Date("2022-02-01"));
-let assignment5 = new Assignment("Mobilutveckling med Java", false, new Date("2022-05-22"), null);
-let assignment6 = new Assignment("Java web-services", true, new Date("2021-12-22"), new Date("2022-01-01"));
-
-let toDos: Assignment[] = [
-    assignment2,
-    assignment5
-];
-
-let toDones: Assignment[] = [
-    assignment1,
-    assignment3,
-    assignment4,
-    assignment6
-];
+let tempList: Assignment[] = JSON.parse(localStorage.getItem("todosList"));
+let toDos: Assignment[] = [];
 
 const done: string = "DONE";
 const undo: string = "UNDO";
@@ -28,22 +12,37 @@ let doneList: HTMLDivElement = document.getElementById("done-list") as HTMLDivEl
 let addInput: HTMLInputElement = document.getElementById("add-input") as HTMLInputElement;
 let addButton: HTMLButtonElement = document.getElementById("add-button") as HTMLButtonElement;
 
-let orderAToDo: HTMLElement = document.getElementById("order-a-todo") as HTMLElement;
-let orderNToDo: HTMLElement = document.getElementById("order-n-todo") as HTMLElement;
-let orderADone: HTMLElement = document.getElementById("order-a-done") as HTMLElement;
-let orderNDone: HTMLElement = document.getElementById("order-n-done") as HTMLElement;
+let orderAToDo: HTMLDivElement = document.getElementById("order-a-todo") as HTMLDivElement;
+let orderNToDo: HTMLDivElement = document.getElementById("order-n-todo") as HTMLDivElement;
+let orderADone: HTMLDivElement = document.getElementById("order-a-done") as HTMLDivElement;
+let orderNDone: HTMLDivElement = document.getElementById("order-n-done") as HTMLDivElement;
 
 /*
             INIT CALL FOR LISTS
 */
-for (let i = 0; i < toDos.length; i++) {
-    const assignment = toDos[i];
-    createListObject(assignment);
+initList();
+
+function initList() {
+    if (tempList === null) {
+        return;
+    }
+    for (let i = 0; i < tempList.length; i++) {
+        toDos.push(tempList[i]);
+    }
+    printList(false);
+    printList(true);
 }
 
-for (let i = 0; i < toDones.length; i++) {
-    const doneAssignment = toDones[i];
-    createListObject(doneAssignment);
+/* 
+            PRINTLIST FUNCTION
+*/
+function printList(isIt: boolean) {
+    for (let i = 0; i < toDos.length; i++) {
+        if (toDos[i].done == isIt) {
+            const assignment = toDos[i];
+            createListObject(assignment);
+        }
+    }
 }
 
 /* 
@@ -57,9 +56,10 @@ addButton.onclick = function() {
 
     let assignment: Assignment = new Assignment(addInput.value, false, new Date(), null);
     toDos.push(assignment);
-    
+        
     createListObject(assignment);
     addInput.value = "";
+    localStorage.setItem("todosList", JSON.stringify(toDos));
 }
 
 /* 
@@ -69,7 +69,7 @@ function createListObject(assignment: Assignment) {
     let listObject: HTMLDivElement = document.createElement("div");
     listObject.setAttribute("class", "d-flex list-group-item justify-content-between");
 
-    let title: HTMLHeadElement = document.createElement("h4"); // FRÅGA OM HTMLHeadElement
+    let title: HTMLHeadingElement = document.createElement("h4");
     title.innerText = assignment.title;
 
     let liButton: HTMLButtonElement = document.createElement("button");
@@ -80,15 +80,11 @@ function createListObject(assignment: Assignment) {
     doneUndoButton(listObject, assignment, liButton);
 
     if (assignment.done == true) {
-        liButton.innerHTML = undo;
-        liButton.setAttribute("class", "btn btn-dark");
-        doneList.appendChild(listObject);
+        newButton(true, liButton, listObject);
         return;
     }
         
-    liButton.innerHTML = done;
-    liButton.setAttribute("class", "btn btn-success");
-    toDoList.appendChild(listObject);
+    newButton(false, liButton, listObject);
 }
 
 /* 
@@ -98,33 +94,41 @@ function doneUndoButton(aDiv: HTMLDivElement, assignment: Assignment, button: HT
     button.onclick = function() {
         if(assignment.done == false) {
             doneButton(aDiv, assignment, button);
+            localStorage.setItem("todosList", JSON.stringify(toDos));
             return;
         }
-        undoButton(aDiv, assignment, button);    
+        undoButton(aDiv, assignment, button);
+        localStorage.setItem("todosList", JSON.stringify(toDos));
     };
 }
 
+function newButton(isIt: boolean, nButton: HTMLButtonElement, aDiv: HTMLDivElement) {
+    if (isIt == true) {
+        nButton.innerHTML = undo;
+        nButton.setAttribute("class", "btn btn-dark");
+        doneList.appendChild(aDiv);
+        return;
+    }
+    
+    nButton.innerHTML = done;
+    nButton.setAttribute("class", "btn btn-success");
+    toDoList.appendChild(aDiv);
+}
+
+
 // DONE FUNCTION
 function doneButton(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
+    newButton(true, button, aDiv);
     assignment.done = true;
-    button.setAttribute("class", "btn btn-dark");
-    button.innerHTML = undo;
     assignment.doneAt = new Date();
-    doneList.appendChild(aDiv);
-    toDones.push(assignment);
-    toDos.splice(toDos.indexOf(assignment), 1);
 }
 // UNDO FUNCTION
 function undoButton(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
+    newButton(false, button, aDiv);
     assignment.done = false;
-    button.setAttribute("class", "btn btn-success");
-    button.innerHTML = done;
     assignment.doneAt = null;
-    toDoList.appendChild(aDiv);
-    toDos.push(assignment);
-    toDones.splice(toDones.indexOf(assignment), 1);
+    // toDos.splice(toDos.indexOf(assignment), 1);
 }
-
 
 /* 
             SORT
@@ -135,9 +139,8 @@ function isAlphabeticOrder(el: Assignment, index: number, arr: Assignment[]) {
     if (index === 0){
       return true;
     }
-    else {
-      return (el.title.toLowerCase() >= arr[index - 1].title.toLowerCase());
-    }
+    
+    return (el.title.toLowerCase() >= arr[index - 1].title.toLowerCase());
 }
 
 // CHECK ADDED DATE
@@ -145,9 +148,8 @@ function isTodoOrder(el: Assignment, index: number, arr: Assignment[]) {
     if (index === 0){
       return true;
     }
-    else {
-      return (el.addedAt >= arr[index - 1].addedAt);
-    }
+
+    return (el.addedAt >= arr[index - 1].addedAt);
 }
 
 // CHECK COMPLETED DATE
@@ -155,9 +157,8 @@ function isDoneOrder(el: Assignment, index: number, arr: Assignment[]) {
     if (index === 0){
       return true;
     }
-    else {
-      return (el.title.toLowerCase() >= arr[index - 1].title.toLowerCase());
-    }
+
+    return (el.doneAt >= arr[index - 1].doneAt);
 }
 
 // SORT TODO ALPHABETIC
@@ -166,17 +167,12 @@ orderAToDo.onclick = function() {
 
     if (toDos.every(isAlphabeticOrder)) {
         toDos.sort((a, b) => b.title.localeCompare(a.title));
-        for (let i = 0; i < toDos.length; i++) {
-            const assignment = toDos[i];
-            createListObject(assignment);
-        }
-    } else {
-        toDos.sort((a, b) => a.title.localeCompare(b.title));
-        for (let i = 0; i < toDos.length; i++) {
-            const assignment = toDos[i];
-            createListObject(assignment);
-        }
+        printList(false);
+        return;
     }
+
+    toDos.sort((a, b) => a.title.localeCompare(b.title));
+    printList(false);
 }
 
 // SORT TODO DATE ADDED
@@ -185,53 +181,53 @@ orderNToDo.onclick = function() {
 
     if (toDos.every(isTodoOrder)) {
         toDos.sort((dateA, dateB) => dateB.addedAt.getTime() - dateA.addedAt.getTime());
-        for (let i = 0; i < toDos.length; i++) {
-            const assignment = toDos[i];
-            createListObject(assignment);
-        }
-    } else {
-        toDos.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
-        for (let i = 0; i < toDos.length; i++) {
-            const assignment = toDos[i];
-            createListObject(assignment);
-        }
+
+        printList(false);
+        return;
     }
+
+    toDos.sort((dateA, dateB) =>
+        dateA.addedAt.getTime() - dateB.addedAt.getTime());
+
+    printList(false);
 }
 
 // SORT DONE ALPHABETIC
 orderADone.onclick = function() {
     doneList.innerHTML = "";
 
-    if (toDones.every(isAlphabeticOrder)) {
-        toDones.sort((a, b) => b.title.localeCompare(a.title));
-        for (let i = 0; i < toDones.length; i++) {
-            const assignment = toDones[i];
-            createListObject(assignment);
-        }
-    } else {
-        toDones.sort((a, b) => a.title.localeCompare(b.title));
-        for (let i = 0; i < toDones.length; i++) {
-            const assignment = toDones[i];
-            createListObject(assignment);
-        }  
-    }
+    if (toDos.every(isAlphabeticOrder)) {
+        toDos.sort((a, b) => b.title.localeCompare(a.title));
+        printList(true);
+        return;
+    } 
+
+    toDos.sort((a, b) => a.title.localeCompare(b.title));
+    printList(true);
+    
 }
 
 // SORT DONE DATE ADDED
 orderNDone.onclick = function() {
     doneList.innerHTML = "";
 
-    if (toDones.every(isTodoOrder)) {
-        toDones.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
-        for (let i = 0; i < toDones.length; i++) {
-            const assignment = toDones[i];
-            createListObject(assignment);
-        }
-    } else {
-        toDones.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
-        for (let i = 0; i < toDones.length; i++) {
-            const assignment = toDones[i];
-            createListObject(assignment);
-        }
+    if (toDos.every(isDoneOrder)) {
+        toDos.sort((dateA, dateB) => {
+            if (dateA.doneAt != null && dateB.doneAt != null) {
+                return dateB.doneAt.getTime() - dateA.doneAt.getTime();
+            }
+        });
+        printList(true);
+        return;
     }
+
+    toDos.sort((dateA, dateB) => {
+    if (dateA.doneAt != null && dateB.doneAt != null) {
+        return dateA.doneAt.getTime() - dateB.doneAt.getTime();
+    }
+    });
+    printList(true);
 }
+
+
+console.log(toDos);
