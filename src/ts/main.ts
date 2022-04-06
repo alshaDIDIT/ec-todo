@@ -153,40 +153,42 @@ function isDoneOrder(el: Assignment, index: number, arr: Assignment[]) {
 // SORT TODO ALPHABETIC
 orderAToDo.onclick = function() {
     toDoList.innerHTML = "";
+    
+    let tempList = fillTempList(toDos, false);
 
-    if (toDos.every(isAlphabeticOrder)) {
-        toDos.sort((a, b) => b.title.localeCompare(a.title));
-        printList(false, toDos);
+    if (tempList.every(isAlphabeticOrder)) {
+        tempList.sort((a, b) => b.title.localeCompare(a.title));
+        printList(false, tempList);
         return;
     }
 
-    toDos.sort((a, b) => a.title.localeCompare(b.title));
-    printList(false, toDos);
+    tempList.sort((a, b) => a.title.localeCompare(b.title));
+    printList(false, tempList);
 }
 
 // SORT TODO DATE ADDED
 orderNToDo.onclick = function() {
     toDoList.innerHTML = "";
 
-    if (toDos.every(isTodoOrder)) {
-        toDos.sort((dateA, dateB) => dateB.addedAt.getTime() - dateA.addedAt.getTime());
+    let tempList = fillTempList(toDos, false);
 
-        printList(false, toDos);
+    if (tempList.every(isTodoOrder)) {
+        tempList.sort((dateA, dateB) => dateB.addedAt.getTime() - dateA.addedAt.getTime());
+
+        printList(false, tempList);
         return;
     }
 
-    toDos.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
+    tempList.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
 
-    printList(false, toDos);
+    printList(false, tempList);
 }
 
 // SORT DONE ALPHABETIC
 orderADone.onclick = function() {
     doneList.innerHTML = "";
 
-    let tempList: Assignment[] = [];
-
-    fillTempList(toDos, tempList, true);
+    let tempList = fillTempList(toDos, true);
 
     if (tempList.every(isAlphabeticOrder)) {
         tempList.sort((a, b) => b.title.localeCompare(a.title));
@@ -203,29 +205,34 @@ orderADone.onclick = function() {
 orderNDone.onclick = function() {
     doneList.innerHTML = "";
 
-    let tempList: Assignment[] = [];
-
-    fillTempList(toDos, tempList, true);
+    let tempList = fillTempList(toDos, true);
 
     if (tempList.every(isDoneOrder)) {
-        toDos.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
+        tempList.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
         printList(true, tempList);
         // console.log(tempList + " b");
         return;
     }
     // console.log(tempList + " a");
-    toDos.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
+    tempList.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
     printList(true, tempList);
 }
 
-function fillTempList(oArray: Assignment[], tempArray: Assignment[], isIt: boolean) {
+/* 
+            FILL TEMPLIST FUNCTION
+*/
+function fillTempList(oArray: Assignment[], isIt: boolean): Assignment[] {
+    let tempList: Assignment[] = [];
+
     if (oArray == null) {
         return;
     }
 
     for (let i = 0; i < toDos.length; i++) {
         if (oArray[i].done == isIt) {
-            tempArray.push(oArray[i]);
+            tempList.push(oArray[i]);
         }
     }
+
+    return tempList;
 }
