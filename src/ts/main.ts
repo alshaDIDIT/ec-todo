@@ -150,24 +150,6 @@ function isAlphabeticOrder(el: Assignment, index: number, arr: Assignment[]) {
     return (el.title.toLowerCase() >= arr[index - 1].title.toLowerCase());
 }
 
-// CHECK ADDED DATE
-function isTodoOrder(el: Assignment, index: number, arr: Assignment[]) {
-    if (index === 0){
-      return true;
-    }
-
-    return (el.addedAt >= arr[index - 1].addedAt);
-}
-
-// CHECK COMPLETED DATE
-function isDoneOrder(el: Assignment, index: number, arr: Assignment[]) {
-    if (index === 0){
-      return true;
-    }
-
-    return (el.doneAt >= arr[index - 1].doneAt);
-}
-
 // SORT TODO ALPHABETIC
 orderAToDo.onclick = function() {
     toDoList.innerHTML = "";
@@ -181,6 +163,39 @@ orderAToDo.onclick = function() {
     toDos.sort((a, b) => a.title.localeCompare(b.title));
     printList(toDos, false);
 }
+
+// SORT DONE ALPHABETIC
+orderADone.onclick = function() {
+    doneList.innerHTML = "";
+
+    if (toDos.every(isAlphabeticOrder)) {
+        toDos.sort((a, b) => b.title.localeCompare(a.title));
+        printList(toDos, true);
+        return;
+    } 
+
+    toDos.sort((a, b) => a.title.localeCompare(b.title));
+    printList(toDos, true);
+    
+}
+
+// CHECK ADDED DATE
+// function isTodoOrder(el: Assignment, index: number, arr: Assignment[]) {
+//     if (index === 0){
+//       return true;
+//     }
+
+//     return (el.addedAt >= arr[index - 1].addedAt);
+// }
+
+// CHECK COMPLETED DATE
+// function isDoneOrder(el: Assignment, index: number, arr: Assignment[]) {
+//     if (index === 0){
+//       return true;
+//     }
+
+//     return (el.doneAt >= arr[index - 1].doneAt);
+// }
 
 // SORT TODO DATE ADDED
 // orderNToDo.onclick = function() {
@@ -197,21 +212,6 @@ orderAToDo.onclick = function() {
 
 //     printList(toDos, false);
 // }
-
-// SORT DONE ALPHABETIC
-orderADone.onclick = function() {
-    doneList.innerHTML = "";
-
-    if (toDos.every(isAlphabeticOrder)) {
-        toDos.sort((a, b) => b.title.localeCompare(a.title));
-        printList(toDos, true);
-        return;
-    } 
-
-    toDos.sort((a, b) => a.title.localeCompare(b.title));
-    printList(toDos, true);
-    
-}
 
 // SORT DONE DATE ADDED
 // orderNDone.onclick = function() {
@@ -233,39 +233,3 @@ orderADone.onclick = function() {
 //     console.log(tempList.every(isDoneOrder));
 //     printList(tempList, true);
 // }
-
-
-console.log(toDos);
-
-
-// OM PARCEL VILL FUNKA
-function fillTempList(oArray: Assignment[], tempList: Assignment[], isIt?: boolean) {
-
-    if (oArray == null) {
-        return;
-    }
-
-    if (isIt) {
-        for (let i = 0; i < oArray.length; i++) {
-            console.log(1);
-            if (oArray[i].done === isIt) {
-                tempList.push(oArray[i]);
-            }
-        }
-        return;
-    }
-
-    if (!isIt) {
-        for (let i = 0; i < oArray.length; i++) {
-            if (oArray[i].done != isIt) {
-                tempList.push(oArray[i]);
-            }
-        }
-        return;
-    }
-
-    for (let i = 0; i < oArray.length; i++) {
-        tempList.push(oArray[i]);
-    }
-
-}
