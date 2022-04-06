@@ -29,19 +29,37 @@ function initList() {
     for (let i = 0; i < getList.length; i++) {
         toDos.push(getList[i]);
     }
-    printList(false, toDos);
-    printList(true, toDos);
+    printList(toDos, false);
+    printList(toDos, true);
 }
 
 /* 
             PRINTLIST FUNCTION
 */
-function printList(isIt: boolean, arr: Assignment[]) {
-    for (let i = 0; i < toDos.length; i++) {
-        if (arr[i].done == isIt) {
-            const assignment = toDos[i];
-            createListObject(assignment);
+function printList(arr: Assignment[], isIt?: boolean) {
+    if (isIt) {
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].done == isIt) {
+                const assignment = arr[i];
+                createListObject(assignment);
+            }
         }
+        return;
+    }
+
+    if (!isIt) {
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].done == isIt) {
+                const assignment = arr[i];
+                createListObject(assignment);
+            }
+        }
+        return;
+    }
+
+    for (let i = 0; i < arr.length; i++) {
+        const assignment = arr[i];
+        createListObject(assignment);
     }
 }
 
@@ -93,6 +111,7 @@ function createListObject(assignment: Assignment) {
 function doneUndoButtonFunction(aDiv: HTMLDivElement, assignment: Assignment, button: HTMLButtonElement) {
     button.onclick = function() {
         if(assignment.done == false) {
+            assignment.doneAt = new Date();
             newButton(true, aDiv, assignment, button);
             localStorage.setItem("todosList", JSON.stringify(toDos));
             return;
@@ -108,7 +127,6 @@ function newButton(isIt: boolean, aDiv: HTMLDivElement, assignment: Assignment, 
         nButton.setAttribute("class", "btn btn-dark");
         doneList.appendChild(aDiv);
         assignment.done = true;
-        assignment.doneAt = new Date();
         return;
     }
     
@@ -156,12 +174,12 @@ orderAToDo.onclick = function() {
 
     if (toDos.every(isAlphabeticOrder)) {
         toDos.sort((a, b) => b.title.localeCompare(a.title));
-        printList(false, toDos);
+        printList(toDos, false);
         return;
     }
 
     toDos.sort((a, b) => a.title.localeCompare(b.title));
-    printList(false, toDos);
+    printList(toDos, false);
 }
 
 // SORT TODO DATE ADDED
@@ -171,13 +189,13 @@ orderNToDo.onclick = function() {
     if (toDos.every(isTodoOrder)) {
         toDos.sort((dateA, dateB) => dateB.addedAt.getTime() - dateA.addedAt.getTime());
 
-        printList(false, toDos);
+        printList(toDos, false);
         return;
     }
 
     toDos.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
 
-    printList(false, toDos);
+    printList(toDos, false);
 }
 
 // SORT DONE ALPHABETIC
@@ -186,12 +204,12 @@ orderADone.onclick = function() {
 
     if (toDos.every(isAlphabeticOrder)) {
         toDos.sort((a, b) => b.title.localeCompare(a.title));
-        printList(true, toDos);
+        printList(toDos, true);
         return;
     } 
 
     toDos.sort((a, b) => a.title.localeCompare(b.title));
-    printList(true, toDos);
+    printList(toDos, true);
     
 }
 
@@ -201,21 +219,19 @@ orderNDone.onclick = function() {
 
     let tempList: Assignment[] = [];
 
-    for (let i = 0; i < toDos.length; i++) {
-        if (toDos[i].done == true) {
-            tempList.push(toDos[i]);
-        }
-    }
+    fillTempList(toDos, tempList, false);
+    console.log(tempList);
 
     if (tempList.every(isDoneOrder)) {
-        toDos.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
-        printList(true, tempList);
-        console.log(tempList + " b");
+        tempList.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
+        console.log(tempList);
+        printList(tempList, true);
+        console.log(tempList.every(isDoneOrder));
         return;
     }
-    console.log(tempList + " a");
-    toDos.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
-    printList(true, tempList);
+    tempList.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
+    console.log(tempList.every(isDoneOrder));
+    printList(tempList, true);
 }
 
 
@@ -223,18 +239,33 @@ console.log(toDos);
 
 
 // OM PARCEL VILL FUNKA
-function fillTempList(oArray: Assignment[], isIt: boolean): Assignment[] {
-    let tempList: Assignment[] = [];
+function fillTempList(oArray: Assignment[], tempList: Assignment[], isIt?: boolean) {
 
     if (oArray == null) {
         return;
     }
 
-    for (let i = 0; i < oArray.length; i++) {
-        if (oArray[i].done == isIt) {
-            tempList.push(oArray[i]);
+    if (isIt) {
+        for (let i = 0; i < oArray.length; i++) {
+            console.log(1);
+            if (oArray[i].done === isIt) {
+                tempList.push(oArray[i]);
+            }
         }
+        return;
     }
 
-    return tempList;
+    if (!isIt) {
+        for (let i = 0; i < oArray.length; i++) {
+            if (oArray[i].done != isIt) {
+                tempList.push(oArray[i]);
+            }
+        }
+        return;
+    }
+
+    for (let i = 0; i < oArray.length; i++) {
+        tempList.push(oArray[i]);
+    }
+
 }

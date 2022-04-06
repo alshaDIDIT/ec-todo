@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/alshaDIDIT/ec-todo#readme",
   "devDependencies": {
-    "parcel": "^2.4.0"
+    "parcel": "^2.4.1"
   }
 }
