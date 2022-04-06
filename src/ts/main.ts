@@ -183,20 +183,20 @@ orderAToDo.onclick = function() {
 }
 
 // SORT TODO DATE ADDED
-orderNToDo.onclick = function() {
-    toDoList.innerHTML = "";
+// orderNToDo.onclick = function() {
+//     toDoList.innerHTML = "";
 
-    if (toDos.every(isTodoOrder)) {
-        toDos.sort((dateA, dateB) => dateB.addedAt.getTime() - dateA.addedAt.getTime());
+//     if (toDos.every(isTodoOrder)) {
+//         toDos.sort((dateA, dateB) => dateB.addedAt.getTime() - dateA.addedAt.getTime());
 
-        printList(toDos, false);
-        return;
-    }
+//         printList(toDos, false);
+//         return;
+//     }
 
-    toDos.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
+//     toDos.sort((dateA, dateB) => dateA.addedAt.getTime() - dateB.addedAt.getTime());
 
-    printList(toDos, false);
-}
+//     printList(toDos, false);
+// }
 
 // SORT DONE ALPHABETIC
 orderADone.onclick = function() {
@@ -214,25 +214,25 @@ orderADone.onclick = function() {
 }
 
 // SORT DONE DATE ADDED
-orderNDone.onclick = function() {
-    doneList.innerHTML = "";
+// orderNDone.onclick = function() {
+//     doneList.innerHTML = "";
 
-    let tempList: Assignment[] = [];
+//     let tempList: Assignment[] = [];
 
-    fillTempList(toDos, tempList, false);
-    console.log(tempList);
+//     fillTempList(toDos, tempList, false);
+//     console.log(tempList);
 
-    if (tempList.every(isDoneOrder)) {
-        tempList.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
-        console.log(tempList);
-        printList(tempList, true);
-        console.log(tempList.every(isDoneOrder));
-        return;
-    }
-    tempList.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
-    console.log(tempList.every(isDoneOrder));
-    printList(tempList, true);
-}
+//     if (tempList.every(isDoneOrder)) {
+//         tempList.sort((dateA, dateB) => dateB.doneAt.getTime() - dateA.doneAt.getTime());
+//         console.log(tempList);
+//         printList(tempList, true);
+//         console.log(tempList.every(isDoneOrder));
+//         return;
+//     }
+//     tempList.sort((dateA, dateB) => dateA.doneAt.getTime() - dateB.doneAt.getTime());
+//     console.log(tempList.every(isDoneOrder));
+//     printList(tempList, true);
+// }
 
 
 console.log(toDos);
